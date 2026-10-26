@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Hostel Management System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+        }
+
+        header {
+            background: #243b55;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            background: #141e30;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        nav button:hover {
+            background: #217dbb;
+        }
+
+        .container {
+            width: 85%;
+            margin: 25px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #ccc;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        input, select, textarea {
+            width: 95%;
+            padding: 10px;
+            margin: 8px 0 15px;
+            border: 1px solid #bbb;
+            border-radius: 5px;
+        }
+
+        .submit-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 11px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .card {
+            flex: 1;
+            min-width: 150px;
+            background: #eaf2f8;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Digital Hostel Management System</h1>
+    <p>Smart and Easy Hostel Administration</p>
+</header>
+
+<nav>
+    <button onclick="showPage('dashboard')">Dashboard</button>
+    <button onclick="showPage('student')">Student Registration</button>
+    <button onclick="showPage('room')">Room Allocation</button>
+    <button onclick="showPage('fees')">Fee Management</button>
+    <button onclick="showPage('complaint')">Complaints</button>
+</nav>
+
+<div class="container">
+
+    <section id="dashboard" class="page active">
+        <h2>Dashboard</h2>
+        <p>Welcome to the Digital Hostel Management System.</p>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Students</h3>
+                <h2 id="studentCount">0</h2>
+            </div>
+            <div class="card">
+                <h3>Rooms Allocated</h3>
+                <h2 id="roomCount">0</h2>
+            </div>
+            <div class="card">
+                <h3>Complaints</h3>
+                <h2 id="complaintCount">0</h2>
+            </div>
+        </div>
+    </section>
+
+    <section id="student" class="page">
+        <h2>Student Registration</h2>
+        <form onsubmit="registerStudent(event)">
+            <label>Student Name</label>
+            <input id="studentName" required>
+
+            <label>Roll Number</label>
+            <input id="rollNumber" required>
+
+            <label>Contact Number</label>
+            <input type="tel" id="contact" required>
+
+            <label>Course</label>
+            <input id="course" required>
+
+            <button class="submit-btn" type="submit">
+                Register Student
+            </button>
+        </form>
+        <p id="studentMessage"></p>
+    </section>
+
+    <section id="room" class="page">
+        <h2>Room Allocation</h2>
+        <form onsubmit="allocateRoom(event)">
+            <label>Student Name</label>
+            <input id="roomStudent" required>
+
+            <label>Select Room</label>
+            <select id="roomNumber">
+                <option value="101">Room 101</option>
+                <option value="102">Room 102</option>
+                <option value="103">Room 103</option>
+                <option value="104">Room 104</option>
+            </select>
+
+            <button class="submit-btn" type="submit">
+                Allocate Room
+            </button>
+        </form>
+        <p id="roomMessage"></p>
+    </section>
+
+    <section id="fees" class="page">
+        <h2>Fee Management</h2>
+        <form onsubmit="payFees(event)">
+            <label>Student Name</label>
+            <input id="feeStudent" required>
+
+            <label>Hostel Fee (₹)</label>
+            <input type="number" id="feeAmount" min="1" required>
+
+            <label>Payment Status</label>
+            <select id="feeStatus">
+                <option>Paid</option>
+                <option>Pending</option>
+            </select>
+
+            <button class="submit-btn" type="submit">
+                Submit Fee Status
+            </button>
+        </form>
+        <p id="feeMessage"></p>
+    </section>
+
+    <section id="complaint" class="page">
+        <h2>Complaint Management</h2>
+        <form onsubmit="submitComplaint(event)">
+            <label>Student Name</label>
+            <input id="complaintStudent" required>
+
+            <label>Complaint Type</label>
+            <select id="complaintType">
+                <option>Water Supply</option>
+                <option>Electricity</option>
+                <option>Room Cleaning</option>
+                <option>Food Quality</option>
+                <option>Other</option>
+            </select>
+
+            <label>Complaint Description</label>
+            <textarea id="description" required></textarea>
+
+            <button class="submit-btn" type="submit">
+                Submit Complaint
+            </button>
+        </form>
+        <p id="complaintMessage"></p>
+    </section>
+
+</div>
+
+<footer>
+    <p>Digital Hostel Management System | UI Prototype</p>
+</footer>
+
+<script>
+    let students = 0;
+    let rooms = 0;
+    let complaints = 0;
+    let allocatedRooms = [];
+
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+
+        document.getElementById(pageId).classList.add('active');
+    }
+
+    function registerStudent(event) {
+        event.preventDefault();
+
+        students++;
+        document.getElementById('studentCount').textContent = students;
+
+        document.getElementById('studentMessage').textContent =
+            'Student registered successfully!';
+
+        event.target.reset();
+    }
+
+    function allocateRoom(event) {
+        event.preventDefault();
+
+        const room = document.getElementById('roomNumber').value;
+
+        if (allocatedRooms.includes(room)) {
+            document.getElementById('roomMessage').textContent =
+                'This room is already allocated. Please select another room.';
+            return;
+        }
+
+        allocatedRooms.push(room);
+        rooms++;
+
+        document.getElementById('roomCount').textContent = rooms;
+        document.getElementById('roomMessage').textContent =
+            'Room allocated successfully!';
+
+        event.target.reset();
+    }
+
+    function payFees(event) {
+        event.preventDefault();
+
+        const name = document.getElementById('feeStudent').value;
+        const amount = document.getElementById('feeAmount').value;
+        const status = document.getElementById('feeStatus').value;
+
+        document.getElementById('feeMessage').textContent =
+            name + ': ₹' + amount + ' - Payment Status: ' + status;
+
+        event.target.reset();
+    }
+
+    function submitComplaint(event) {
+        event.preventDefault();
+
+        complaints++;
+        document.getElementById('complaintCount').textContent = complaints;
+
+        document.getElementById('complaintMessage').textContent =
+            'Complaint submitted successfully!';
+
+        event.target.reset();
+    }
+</script>
+
+</body>
+</html>
